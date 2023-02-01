@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Grounding Language Models to Images for Multimodal Generation</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+a {
+  text-decoration: none;
+}
+
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+}
+
+.content {
+  width: 80%;
+  max-width: 1024px;
+  padding: 10px 0;
+  margin: auto;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 32px;
+}
+
+th {
+    font-weight: 300;
+    font-size: 20px;
+}
+
+.authors a {
+  font-size:  20px;
+  /*font-weight: 600;*/
+}
+
+.affiliation tr th {
+    font-size: 18px;
+}
+
+.button {
+  display: inline-block;
+  align-items: center;
+  padding: 16px 20px;
+  margin: 10px 20px;
+  background-color: #f4f6f7;  /* light grey */
+  color: black;
+  border:  1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  cursor:  default;
+}
+
+.button:hover {
+  background-color: #cacaca; /* slightly darker grey */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.button i {
+  margin-right: 8px;
+  line-height:  100%;
+  height:  100%;
+}
+
+
+.button.coming-soon {
+  padding: 8px 20px;
+  background-color: #cccccc; /* light gray */
+  color: #999999; /* gray */
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.button.coming-soon::after {
+  content: "(coming soon!)";
+  color: #333;
+  font-size: 12px;
+  display: block;
+  /*margin-bottom: -10px;*/
+}
+
+.container {
+  /*text-align: center;*/
+  display:  flex;
+  align-items:  center;
+  justify-content: center;
+}
+
+.abstract {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-container {
+  width: 50%;
+  margin-right: 1%;
+  display:  inline-block;
+  margin-bottom: 20px;
+}
+
+.right-container {
+  width:  45%;
+  margin-left: 1%;
+  display:  inline-block;
+  float: right;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .left-container {
+    width: 90%;
+  }
+  .right-container {
+    width:  90%;
+  }
+}
+
+.dialogue-image {
+  width: 49%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .dialogue-image {
+    width: 90%;
+  }
+}
+
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.light-hr {
+  box-shadow: none; /* remove the box-shadow */
+  background-color: #ccc; /* make the line less dark */
+}
+
+.layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+    box-shadow:
+            0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+            5px 5px 0 0px #fff, /* The second layer */
+            5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+            10px 10px 0 0px #fff, /* The third layer */
+            10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
+            15px 15px 0 0px #fff, /* The fourth layer */
+            15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
+            20px 20px 0 0px #fff, /* The fifth layer */
+            20px 20px 1px 1px rgba(0,0,0,0.35);
+    margin-left: 0px;
+    margin-right: 40px;
+}
+</style>
+
+<!--[if lt IE 9]>
+<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/fromage/cheese_icon.ico">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+</head>
+<body>
+<div class="content"  align="center">
+
+<div>
+<h1>Grounding Language Models to Images for Multimodal Generation</h1>
+</div>
+<table class="authors" style="width:65%" align="center">
+  <tr>
+    <th><a href="https://jykoh.com" target="_blank">Jing Yu Koh</a></th>
+    <th><a href="https://www.cs.cmu.edu/~rsalakhu/" target="_blank">Ruslan Salakhutdinov</a></th>
+    <th><a href="https://dpfried.github.io" target="_blank">Daniel Fried</a></th>
+  </tr>
+</table>
+<table class="affiliation" style="width:40%;" align="center">
+  <tr>
+    <th>Carnegie Mellon University</th>
+  </tr>
+</table>
+
+<br/>
+<div class="container">
+  <a href="https://arxiv.org/abs/2301.13823" class="button" target="_blank"><i class="fas fa-newspaper"></i> Paper</a>
+  <a href="#" class="button coming-soon" target="https://github.com/kohjingyu/fromage"><i class="fas fa-code"></i> Code</a>
+  <a href="#" class="button coming-soon" target="_blank"><i class="fas fa-robot"></i> Demo</a>
+</div>
+
+<hr class="light-hr"/>
+
+<div class="abstract">
+<div class="left-container">
+<div align="left">
+<h1>Abstract</h1>
+<p align="justify">
+We propose an efficient method to ground pretrained text-only language models to the visual domain, enabling them to process and generate arbitrarily interleaved image-and-text data. Our method leverages the abilities of language models learnt from large scale text-only pretraining, such as in-context learning and free-form text generation. We keep the language model frozen, and finetune input and output linear layers to enable cross-modality interactions. This allows our model to process arbitrarily interleaved image-and-text inputs, and generate free-form text interleaved with retrieved images. We achieve strong zero-shot performance on grounded tasks such as contextual image retrieval and multimodal dialogue, and showcase compelling interactive abilities. Our approach works with any off-the-shelf language model and paves the way towards an effective, general solution for leveraging pretrained language models in visually grounded settings.
+</p>
+</div>
+</div>
+
+<div class="right-container">
+<img style="width: 100%; height: auto;" src="fromage/bird_chat_animation.gif" alt="Example of FROMAGe producing multimodal dialogue about birds."/>
+</div>
+</div>
+
+<br/>
+
+
+<div align="left">
+<h1>Model</h1>
+<img style="width: 100%; height: auto;" src="fromage/fromage_architecture.png" alt="Model architectue of FROMAGe."/>
+<br/><br/>
+
+FROMAGe (<strong>F</strong>rozen <strong>R</strong>etrieval <strong>O</strong>ver <strong>M</strong>ultimodal Data for <strong>A</strong>utoregressive <strong>Ge</strong>neration) is a model trained on image text pairs on a multi-objective loss of image captioning and image-text retrieval.
+<br/><br/>
+It is capable of processing arbitrarily interleaved image and text inputs, and producing interleaved images and text as outputs. FROMAGe is capable of a variety of zero-shot and few-shot image-text tasks.
+</div>
+<br/>
+
+
+
+<div align="left">
+<h1>Capabilities</h1>
+<p align="left">
+FROMAGe is capable of producing compelling few-shot results on various image-text tasks. Images shown are retrieved from the <a href="https://ai.google.com/research/ConceptualCaptions" target="_blank">Conceptual Captions</a> dataset. More qualitative results are provided in our <a href="https://arxiv.org/abs/2301.13823" target="_blank">paper</a>.
+</p>
+
+<div align="left">
+<h3>Concept Composition</h3>
+<p>FROMAGe can seamlessly composite image and text data to retrieve images with the desired style or content. Note that the objects ("motorcycle" and "cat") are never explicitly mentioned in text.</p>
+<img style="width: 100%; height: auto;" src="fromage/motorcycle.png" alt="Concept composition example of a motorcycle"/>
+<br/>
+<img style="width: 100%; height: auto;" src="fromage/cat.png" alt="Concept composition example of a cat"/>
+</div>
+
+<div align="left">
+<h3>Multimodal Dialogue</h3>
+<p>FROMAGe can generate multimodal dialogue, processing arbitrarily interleaved image-and-text inputs, and producing image-and-text outputs. Green bubbles indicate model generated outputs, grey bubbles indicate user provided prompts.</p>
+<div align="center">
+<img class="dialogue-image" src="fromage/dialogue_beaver.png" alt="Multimodal dialogue example of beaver talk"/>
+<img class="dialogue-image" src="fromage/dialogue_house.png" alt="Multimodal dialogue example of house talk"/>
+</div>
+</div>
+
+<div align="left">
+<h3>World Knowledge</h3>
+<p>Our model is able to upon knowledge about the world learnt through large scale text-only pretraining of its frozen large language model.</p>
+<img style="width: 100%; height: auto;" src="fromage/world_knowledge.png" alt="World knowledge"/>
+</div>
+
+
+<div align="left">
+<h3>In-context Learning and More</h3>
+<p>Our model is able to perform many more interesting and compelling image-text tasks. More qualitative results are provided in our <a href="https://arxiv.org/abs/2301.13823" target="_blank">paper and appendix</a>.
+</div>
+
+</div>
+
+<br/>
+
+
+<div align="left">
+<h1>Paper</h1>
+<table align="center" height="200px">
+  <tbody><tr>
+    <td>
+      <a href="https://arxiv.org/abs/2301.13823" target="_blank">
+        <img class="layered-paper-big" style="height:175px;" src="fromage/first_page.png" alt="Paper preview"></a>
+    </td>
+    <td>
+      <b><span style="font-size:14pt">Grounding Language Models to Images for Multimodal Generation</span></b>
+      <br><br>
+      <span style="font-size:14pt">Jing Yu Koh, Ruslan Salakhutdinov, Daniel Fried.</span>
+      <br><br>
+      <span style="font-size:14pt">Preprint, 2023.</span>
+      <br><br>
+      <a href="https://arxiv.org/abs/2301.13823" target="_blank">[arXiv]</a> &nbsp; &nbsp;
+    </td>
+  </tr>
+</tbody></table>
+<br/><br/>
+</div>
+<br/>
+
+
+<div align="left">
+<h1>Citation</h1>
+<p style="white-space: pre; font-family: monospace; line-height: 150%; background: #f3f3f3; padding: 10px; display: inline-block; border-radius: 4px; width: 100%; overflow-x: scroll;" align="left">@inproceedings{koh2023grounding,
+  title={Grounding Language Models to Images for Multimodal Generation},
+  author={Koh, Jing Yu and Salakhutdinov, Ruslan and Fried, Daniel},
+  journal={arXiv preprint},
+  year={2023}
+}
+</p>
+</div>
+<br/>
+
+
+<div align="left">
+<h1>Acknowledgements</h1>
+<p>We thank Santiago Cortés, Wendy Kua, Paul Liang, Martin Ma, So Yeon Min, Brandon Trabucco, Saujas Vaduguru, and others for feedback on previous versions of this paper. We thank Felix Hill for insightful discussions about Frozen. Icons from FontAwesome and flaticon.com.</p>
+</div>
+
+</div>
+
+</body>
+</html>
