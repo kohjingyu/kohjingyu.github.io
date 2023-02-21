@@ -281,6 +281,19 @@ FROMAGe is capable of producing compelling few-shot results on various image-tex
 <p>Our model is able to perform many more interesting and compelling image-text tasks. More qualitative results are provided in our <a href="https://arxiv.org/abs/2301.13823" target="_blank">paper and appendix</a>.
 </div>
 
+</div>  <!-- end capabilities -->
+
+<div align="left">
+<h1>Limitations</h1>
+<p align="left">
+FROMAGe is one of the first models to be able to both process and produce image-text data. We believe that it is a promising step towards such multimodal capabilities and systems. Nevertheless, it exhibits several important limitations, that we briefly describe here, and go into more detail in our <a href="https://arxiv.org/abs/2301.13823" target="_blank">paper and appendix</a>:
+<br/>
+
+<ul>
+<li>We find that FROMAGe does not always generate [RET] tokens during inference, and generally has a stronger bias to produce regular text tokens. This is likely due to its comprehensive pretraining regime (on text-only data). Investigating ways to enable FROMAGe to generate [RET] more naturally interleaved with text is also a promising direction for future work.</li>
+<li>FROMAGe retrieves images from the Conceptual Captions training set, which limits its ability to produce truly novel and specific images.</li>
+<li>Our model inherits some of the unintended behaviors of large language models, such as making up facts, ignoring user prompts, or generating incoherent and repetitive text. This is likely to be alleviated by future LLM advances and methods.</li>
+</ul>
 </div>
 
 <br/>
