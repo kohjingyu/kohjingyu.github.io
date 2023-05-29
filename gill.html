@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Generating Images with Multimodal Language Models</title>
+<meta name="description" content="Project webpage for the paper Generating Images with Multimodal Language Models.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-15238452-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<style>
+a {
+  text-decoration: none;
+}
+
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+}
+
+.content {
+  width: 90%;
+  max-width: 1024px;
+  padding: 20px 0;
+  margin: auto;
+}
+
+.header {
+  /*background-color: #F00;*/
+}
+
+.publication-venue {
+  font-size: 20px;
+  color:  #AB2317;
+  font-weight: 600;
+  margin:  8px 0px;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 32px;
+    /*margin-bottom: 0;*/
+}
+
+th {
+    font-weight: 300;
+    font-size: 20px;
+}
+
+.authors a {
+  font-size:  20px;
+  margin: 0 20px;
+  /*font-weight: 600;*/
+}
+
+.affiliation {
+    font-size: 18px;
+}
+
+.button {
+  display: inline-block;
+  align-items: center;
+  padding: 16px 20px;
+  margin: 10px 20px;
+  background-color: #f4f6f7;  /* light grey */
+  color: black;
+  border:  1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  cursor:  default;
+}
+
+.button:hover {
+  background-color: #cacaca; /* slightly darker grey */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.button i {
+  margin-right: 8px;
+  line-height:  100%;
+  height:  100%;
+}
+
+
+.button.coming-soon {
+  padding: 8px 20px;
+  background-color: #cccccc; /* light gray */
+  color: #999999; /* gray */
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.button.coming-soon::after {
+  content: "(coming soon!)";
+  color: #333;
+  font-size: 14px;
+  display: block;
+  /*margin-bottom: -10px;*/
+}
+
+.container {
+  /*text-align: center;*/
+  display:  flex;
+  align-items:  center;
+  justify-content: center;
+}
+
+.abstract {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-container {
+  width: 60%;
+  margin-right: 1%;
+  display:  inline-block;
+  margin-bottom: 20px;
+}
+
+.right-container {
+  width:  35%;
+  margin-left: 1%;
+  display:  inline-block;
+  float: right;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .left-container {
+    width: 90%;
+  }
+  .right-container {
+    width:  90%;
+  }
+}
+
+.dialogue-image {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .dialogue-image {
+    width: 90%;
+  }
+}
+
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.light-hr {
+  box-shadow: none; /* remove the box-shadow */
+  background-color: #ccc; /* make the line less dark */
+}
+
+.layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+    box-shadow:
+            0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+            5px 5px 0 0px #fff, /* The second layer */
+            5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+            10px 10px 0 0px #fff, /* The third layer */
+            10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
+            15px 15px 0 0px #fff, /* The fourth layer */
+            15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
+            20px 20px 0 0px #fff, /* The fifth layer */
+            20px 20px 1px 1px rgba(0,0,0,0.35);
+    margin-left: 0px;
+    margin-right: 40px;
+}
+</style>
+
+<!--[if lt IE 9]>
+<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/fromage/cheese_icon.ico">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+</head>
+<body>
+<div class="content"  align="center">
+
+<div class="header">
+<div>
+<h1>Generating Images with Multimodal Language Models</h1>
+<!-- <p class="publication-venue">Preprint</p> -->
+</div>
+<div class="authors" style="width:65%" align="center">
+  <a href="https://jykoh.com" target="_blank">Jing Yu Koh</a>
+  <a href="https://dpfried.github.io" target="_blank">Daniel Fried</a>
+  <a href="https://www.cs.cmu.edu/~rsalakhu/" target="_blank">Ruslan Salakhutdinov</a>
+</div>
+<!-- <table class="authors" style="width:65%" align="center">
+  <tr>
+    <th><a href="https://jykoh.com" target="_blank">Jing Yu Koh</a></th>
+    <th><a href="https://dpfried.github.io" target="_blank">Daniel Fried</a></th>
+    <th><a href="https://www.cs.cmu.edu/~rsalakhu/" target="_blank">Ruslan Salakhutdinov</a></th>
+  </tr>
+</table>
+ --><div class="affiliation" style="width:40%;" align="center">Carnegie Mellon University</div>
+</table>
+
+<br/>
+<div class="container">
+  <a href="https://arxiv.org/abs/" class="button" target="_blank"><i class="fas fa-newspaper"></i> Paper</a>
+  <a href="https://github.com/kohjingyu/gill" class="button" target="_blank"><i class="fas fa-code"></i> Code</a>
+  <a href="#" class="button coming-soon" target="_blank"><i class="fas fa-robot"></i> Demo</a>
+  <!-- <a href="https://huggingface.co/spaces/jykoh/gill" class="button" target="_blank"><i class="fas fa-robot"></i> Demo</a> -->
+</div>
+</div>
+
+<hr class="light-hr"/>
+
+<div class="abstract">
+<div class="left-container">
+<div align="left">
+<h1>Abstract</h1>
+<p align="justify">
+We propose a method to fuse frozen text-only large language models (LLMs) with pre-trained image encoder and decoder models, by mapping between their embedding spaces. Our model demonstrates a wide suite of multimodal capabilities: image retrieval, novel image generation, and multimodal dialogue. Ours is the first approach capable of conditioning on arbitrarily interleaved image and text inputs to generate coherent image (and text) outputs. To achieve strong performance on image generation, we propose an efficient mapping network to ground the LLM to an off-the-shelf text-to-image generation model. This mapping network translates hidden representations of text into the embedding space of the visual models, enabling us to leverage the strong text representations of the LLM for visual outputs. Our approach outperforms baseline generation models on tasks with longer and more complex language. In addition to novel image generation, our model is also capable of image retrieval from a prespecified dataset, and decides whether to retrieve or generate at inference time. This is done with a learnt decision module which conditions on the hidden representations of the LLM. Our model exhibits a wider range of capabilities compared to prior multimodal language models. It can process image-and-text inputs, and produce retrieved images, generated images, and generated text — outperforming non-LLM based generation models across several text-to-image tasks that measure context dependence.
+</p>
+</div>
+</div>
+
+<div class="right-container">
+<img style="width: 100%; height: auto;" src="gill/teaser.gif" alt="Example of GILL generating multimodal dialogue."/>
+</div>
+</div>
+
+<br/>
+
+
+<div align="left">
+<h1>Model</h1>
+<div align="center">
+<img style="max-width: 900px; height: auto;" src="gill/architecture.png" alt="Model architectue of GILL."/>
+</div>
+<br/>
+
+GILL (<strong>G</strong>enerating <strong>I</strong>mages with <strong>L</strong>arge <strong>L</strong>anguage Models) is capable of processing arbitrarily interleaved image-and-text inputs to generate text, retrieve images, and generate novel images.
+<br/><br/>
+Our findings show that it is possible to efficiently map the output embedding space of a frozen text-only LLM to that of a frozen generation model (in this work, <a href="https://stability.ai/blog/stable-diffusion-public-release" target="_blank">Stable Diffusion</a>) despite both models using entirely different text encoders. We achieve this by finetuning a small number of parameters on <a href="https://ai.google.com/research/ConceptualCaptions" target="_blank">image-caption pairs</a>, in contrast to other methods which require interleaved image-text data. Our approach is computationally efficient and does not require running the image generation model at training time.
+<br/><br/>
+
+<div align="center">
+<img style="max-width: 512px; height: auto;" src="gill/inference.png" alt="Inference time procedure of GILL."/>
+</div>
+<br/>
+During inference, the model takes in arbitrarily interleaved image and text inputs, and produces text interleaved with image embeddings. After deciding whether to retrieve or generate for a particular set of tokens, it returns the appropriate image outputs (either retrieved or generated).
+
+
+</div>
+<br/>
+
+
+
+<div align="left">
+<h1>Capabilities</h1>
+<p align="left">
+One of the more compelling applications of GILL is perhaps its ability to generalize to many different tasks, due to the LLM pretraining and freezing. We showcase several of these capabilities below. More qualitative results are provided in our <a href="https://arxiv.org/abs/?" target="_blank">paper</a>.
+</p>
+
+<div align="left">
+<h3>Multimodal Dialogue Generation</h3>
+<div align="center">
+<img class="dialogue-image" src="gill/dialogue.png" alt="Multimodal dialogue example"/>
+<!-- <img class="dialogue-image" src="gill/dialogue.gif" alt="Multimodal dialogue example"/> -->
+</div>
+GILL can be prompted to generate dialogue-like text, producing multimodal dialogue by interleaving generated text, retrieved images, and generated images. (View as <a href="gill/dialogue.gif" target="_blank">GIF</a> or <a href="gill/dialogue.mp4" target="_blank">MP4</a>)
+</div>
+
+<div align="left">
+<h3>Generating from Visual Stories</h3>
+<img style="width: 100%; height: auto;" src="gill/visual_stories.png" alt="Generating from Visual Stories"/>
+<p>GILL can condition on interleaved image-and-text inputs to generate more relevant images compared to non-LLM based text-to-image generation models.</p>
+</div>
+
+
+<div align="left">
+<h3>Comparison Against FROMAGe</h3>
+<img style="width: 100%; height: auto;" src="gill/fromage_comparison.png" alt="Comparison Against FROMGAe"/>
+<p>Our model composites multimodal information to produce relevant image and text outputs. It can outperform baseline models that are limited to image retrieval.</p>
+</div>
+
+
+</div>  <!-- end capabilities -->
+
+<div align="left">
+<h1>Limitations</h1>
+<p align="left">
+While GILL introduces many exciting capabilities, it is an early research prototype and has several limitations. GILL relies on an LLM backbone for many of its capabilities. As such, it also inherits many of the limitations that are typical of LLMs. More details and discussion are provided in our <a href="https://arxiv.org/abs/?" target="_blank">paper and appendix</a>:
+<br/>
+
+<ul>
+<li>GILL does not always produce images when prompted, or when it is (evidently) useful for the dialogue.</li>
+<li>A limitation of GILL is in its limited visual processing. At the moment, we use only 4 visual vectors to represent each input image (due to computational constraints), which may not capture all the relevant visual information needed for downstream tasks.</li>
+<li>Our model inherits some of the unintended behaviors of LLMs, such as the potential for hallucinations, where it generates content that is false or not relevant to the input data. It also sometimes generates repetitive text, and does not always generate coherent dialogue text.</li>
+</ul>
+
+One of the advantages of our model is that it is modular, and can benefit from stronger visual and language models released in the future. It is likely that it will also benefit from stronger text-to-image generation backbones, or through finetuning the generation backbone rather than just the GILLMapper module. We leave such scaling explorations for future work.
+</div>
+
+<br/>
+
+
+<div align="left">
+<h1>Paper</h1>
+<table align="center" height="200px">
+  <tbody><tr>
+    <td>
+      <a href="https://arxiv.org/abs/?" target="_blank">
+        <img class="layered-paper-big" style="height:175px;" src="gill/first_page.png" alt="Paper preview"></a>
+    </td>
+    <td>
+      <b><span style="font-size:14pt">Generating Images with Multimodal Language Models</span></b>
+      <br><br>
+      <span style="font-size:14pt">Jing Yu Koh, Daniel Fried, and Ruslan Salakhutdinov.</span>
+      <br><br>
+      <span style="font-size:14pt">Preprint, 2023.</span>
+      <br><br>
+      <a href="https://arxiv.org/abs/?" target="_blank">[arXiv]</a> &nbsp; &nbsp;
+    </td>
+  </tr>
+</tbody></table>
+<br/><br/>
+</div>
+<br/>
+
+
+<div align="left">
+<h1>Citation</h1>
+<p style="white-space: pre; font-family: monospace; line-height: 150%; background: #f3f3f3; padding: 10px; display: inline-block; border-radius: 4px; width: 100%; overflow-x: scroll;" align="left">@article{koh2023generating,
+  title={Generating Images with Multimodal Language Models},
+  author={Koh, Jing Yu and Fried, Daniel and Salakhutdinov, Ruslan},
+  journal={arXiv preprint},
+  year={2023}
+}
+</p>
+</div>
+<br/>
+
+
+<div align="left">
+<h1>Acknowledgements</h1>
+<p>This work was partially supported by a gift from Cisco Systems, and by ONR N000142312368 and DARPA/AFRL FA87502321015. We thank Wendy Kua for help with the figures. We thank Jared Fernandez, Yutong He, Saujas Vaduguru, Yonatan Bisk, and others for feedback and helpful discussions on previous versions of this paper.
+ Icons from FontAwesome and flaticon.com.</p>
+</div>
+
+</div>
+
+</body>
+</html>
