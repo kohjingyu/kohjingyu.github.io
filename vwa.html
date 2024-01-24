@@ -91,18 +91,22 @@ th {
 }
 
 .button {
-  display: inline-block;
+  display: inline-flex;
   align-items: center;
-  padding: 16px 20px;
-  margin: 10px 20px;
-  background-color: #f4f6f7;  /* light grey */
-  color: black;
-  border:  1px solid #ccc;
-  border-radius: 4px;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 20px;
+  margin:  15px 15px 0px 15px;
   text-decoration: none;
-  transition: background-color 0.3s ease;
-  cursor:  default;
+  color: #363636;
+  background-color: rgb(245, 245, 245, 1.0);
+  border-radius: 5px;
 }
+
+.button i {
+  margin-right: 5px; /* Add some space between the icon and text if needed */
+}
+
 
 .button:hover {
   background-color: #cacaca; /* slightly darker grey */
@@ -194,7 +198,7 @@ body {
 
 .light-hr {
   box-shadow: none; /* remove the box-shadow */
-  background-color: #ddd; /* make the line less dark */
+  background-color: #eee; /* make the line less dark */
 }
 
 .layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
@@ -332,27 +336,10 @@ body {
 <div class="emails" style="width:100%;" align="center">{jingyuk,rsalakhu,dfried}@cs.cmu.edu</div>
 </table>
 
-<style>
-  .button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px 20px;
-    text-decoration: none;
-    color: #363636;
-    background-color: rgb(245, 245, 245, 1.0);
-    border-radius: 5px;
-  }
-
-  .button i {
-    margin-right: 5px; /* Add some space between the icon and text if needed */
-  }
-</style>
 
 <div class="container">
-  <a href="https://arxiv.org/abs/24xx.xxxxx" class="button" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
-  <a href="https://github.com/web-arena-x/visualwebarena" class="button" target="_blank"><i class="fab fa-github"></i> Code</a>
+  <a href="https://arxiv.org/abs/24xx.xxxxx" class="button" target="_blank"><i class="fas fa-file-pdf"></i>&nbsp;Paper</a>
+  <a href="https://github.com/web-arena-x/visualwebarena" class="button" target="_blank"><i class="fab fa-github"></i>&nbsp;Code</a>
 </div>
 </div>
 <hr class="light-hr"/>
@@ -641,10 +628,17 @@ body {
   }
 </script>
 
+<br/>
+<div align="left">
+<h2>Try the environments yourself!</h2>
+<div align="center">
+<a href="http://ec2-3-13-232-171.us-east-2.compute.amazonaws.com:9980" class="button" target="_blank"><i class="fas fa-store"></i> Classifieds</a>
+<a href="http://ec2-3-13-232-171.us-east-2.compute.amazonaws.com:7770" class="button" target="_blank"><i class="fas fa-shopping-cart"></i> Shopping</a>
+<a href="http://ec2-3-13-232-171.us-east-2.compute.amazonaws.com:9999" class="button" target="_blank"><i class="fa-brands fa-reddit"></i> Reddit</a>
 </div>
+</div>
+<hr class="light-hr"/>
 <br/>
-<br/>
-
 
 <div align="left">
   <h1>Execution-Based Evaluation</h1>
@@ -794,9 +788,9 @@ body {
   </table>
 
   </div>
-  <br/>
-  <br/>
 
+<hr class="light-hr"/>
+<br/>
 <div align="left">
 <h1>Paper</h1>
 <table align="center" height="200px" style="border-collapse: separate; border-spacing: 10px;">
