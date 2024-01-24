@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks</title>
+<meta name="description" content="Project webpage for the VisualWebArena paper.">
+<meta name="viewport" initial-scale=1.0 content="width=device-width" />
+
+<link rel="stylesheet" href="./vwa/css/bulma.min.css">
+<!-- https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css -->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-15238452-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<style>
+a {
+  text-decoration: none;
+}
+
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    color: #000;
+}
+
+.content {
+  width: 90%;
+  max-width: 1024px;
+  padding: 20px 0;
+  margin: auto;
+}
+
+.header {
+  /*background-color: #F00;*/
+}
+
+.publication-venue {
+  font-size: 20px;
+  color:  #AB2317;
+  font-weight: 600;
+  margin:  8px 0px;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 32px;
+    /*margin-bottom: 0;*/
+}
+
+th {
+    font-weight: 300;
+    font-size: 18px;
+}
+
+.authors a {
+  font-size:  18px;
+  margin: 0 20px;
+  white-space: nowrap;
+  width: 70%;
+}
+
+.affiliation {
+    font-size: 18px;
+    color:  #000;
+    /*color:  #AB2317;*/
+     /*font-weight: 600; */
+}
+
+.contribution {
+  font-size: 15px;
+}
+
+.emails {
+  font-family: monospace;
+  color: #888; 
+  font-size: 13px;
+}
+
+.button {
+  display: inline-block;
+  align-items: center;
+  padding: 16px 20px;
+  margin: 10px 20px;
+  background-color: #f4f6f7;  /* light grey */
+  color: black;
+  border:  1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  cursor:  default;
+}
+
+.button:hover {
+  background-color: #cacaca; /* slightly darker grey */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.button i {
+  margin-right: 8px;
+  line-height:  100%;
+  height:  100%;
+}
+
+
+.button.coming-soon {
+  padding: 8px 20px;
+  background-color: #cccccc; /* light gray */
+  color: #999999; /* gray */
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.button.coming-soon::after {
+  content: "(coming soon!)";
+  color: #333;
+  font-size: 14px;
+  display: block;
+  /*margin-bottom: -10px;*/
+}
+
+.container {
+  /*text-align: center;*/
+  display:  flex;
+  align-items:  center;
+  justify-content: center;
+}
+
+.abstract {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-container {
+  width: 40%;
+  margin-right: 1%;
+  display:  inline-block;
+  margin-bottom: 20px;
+}
+
+.right-container {
+  width:  58%;
+  margin-left: 1%;
+  display:  inline-block;
+  float: right;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .left-container {
+    width: 90%;
+  }
+  .right-container {
+    width:  90%;
+  }
+}
+
+.dialogue-image {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .dialogue-image {
+    width: 90%;
+  }
+}
+
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.light-hr {
+  box-shadow: none; /* remove the box-shadow */
+  background-color: #ddd; /* make the line less dark */
+}
+
+.layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+  box-shadow:
+          0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+          5px 5px 0 0px #fff, /* The second layer */
+          5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+          10px 10px 0 0px #fff, /* The third layer */
+          10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
+          15px 15px 0 0px #fff, /* The fourth layer */
+          15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
+          20px 20px 0 0px #fff, /* The fifth layer */
+          20px 20px 1px 1px rgba(0,0,0,0.35);
+  margin-left: 0px;
+  margin-right: 40px;
+}
+
+/* Style for the table */
+#results {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Style for table headers and cells */
+#results th, #results td {
+  border: 1px solid black;
+  text-align: left;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Style for header row */
+#results th {
+  font-size: 16px;
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.video-container {
+  width: 100%;
+  align-items: center; /* This will center the videos vertically */
+}
+
+.video-container video {
+  width: 49%;
+  height: auto;
+  display: inline-block;
+}
+
+/* Alternating row colors */
+#results tr:nth-child(even) {background-color: #f2f2f2;}
+</style>
+
+<!--[if lt IE 9]>
+<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/gill/fish_icon.ico">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Add jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<style>
+    .carousel-container {
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%; /* Make the container cover the entire height of the page */
+    }
+
+    .carousel-wrapper {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 200%; /* Make the wrapper twice as wide to fit two videos side by side */
+    }
+
+    .carousel-item {
+      flex: 0 0 49%; /* Make the videos wider and add margin */
+      max-width: 49%;
+      margin: 0 1%; /* Add margin between videos */
+      box-sizing: border-box;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      z-index: 1; /* Ensure the buttons appear above the videos */
+      background-color: rgb(235, 235, 235, 1.0);
+      border-radius: 50%;
+      padding: 10px;
+      color: #000000;
+      font-size: 1.5rem;
+      transition: background-color 0.3s, color 0.3s;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+    }
+
+    .prev {
+      left: 0;
+    }
+
+    .next {
+      right: 0;
+    }
+  </style>
+
+</head>
+<body>
+<div class="content"  align="center">
+
+<div class="header">
+<div>
+<h1>VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks</h1>
+<p class="publication-venue">Preprint</p>
+</div>
+<div class="authors" align="center">
+  <a href="https://jykoh.com" target="_blank">Jing Yu Koh</a>
+  <a href="https://robertlo.tech/" target="_blank">Robert Lo*</a>
+  <a href="#">Lawrence Jang*</a>
+  <a href="#">Vikram Duvvur*</a>
+  <br/>
+  <a href="#">Ming Chong Lim*</a>
+  <a href="#">Po-Yu Huang*</a>
+  <a href="https://www.phontron.com/" target="_blank">Graham Neubig</a>
+  <a href="https://shuyanzhou.github.io/" target="_blank">Shuyan Zhou</a>
+  <br/>
+  <a href="https://www.cs.cmu.edu/~rsalakhu/" target="_blank">Ruslan Salakhutdinov</a>
+  <a href="https://dpfried.github.io" target="_blank">Daniel Fried</a>
+</div>
+<div class="contribution" style="width:40%;" align="center">* equal contribution</div>
+<div class="affiliation" style="width:40%;" align="center">Carnegie Mellon University</div>
+<div class="emails" style="width:40%;" align="center">{jingyuk,rsalakhu,dfried}@cs.cmu.edu</div>
+</table>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #363636;
+    background-color: rgb(245, 245, 245, 1.0);
+    border-radius: 5px;
+  }
+
+  .button i {
+    margin-right: 5px; /* Add some space between the icon and text if needed */
+  }
+</style>
+
+<div class="container">
+  <a href="https://arxiv.org/abs/24xx.xxxxx" class="button" target="_blank"><i class="fas fa-file-pdf"></i> Paper</a>
+  <a href="https://github.com/web-arena-x/visualwebarena" class="button" target="_blank"><i class="fab fa-github"></i> Code</a>
+</div>
+</div>
+<hr class="light-hr"/>
+
+<div class="abstract">
+<div align="left">
+<div align="center">
+<img style="width: 80%; max-width: 1024px;" src="vwa/overview.png" alt="VisualWebArena overview."/>
+</div>
+
+<p>
+  Autonomous agents capable of planning, reasoning, and executing actions on the web offer a promising avenue for automating computer tasks. However, the majority of existing benchmarks primarily focus on text-based agents, neglecting many natural tasks that require visual information to effectively solve. Given that most computer interfaces cater to human perception, visual information often augments textual data in ways that text-only models struggle to harness effectively.
+  To bridge this gap, we introduce VisualWebArena, a benchmark designed to assess the performance of multimodal web agents on realistic <i>visually grounded tasks</i>. VisualWebArena comprises of a set of diverse and complex web-based tasks that evaluate various capabilities of autonomous multimodal agents. To perform on this benchmark, agents need to accurately process image-text inputs, interpret natural language instructions, and execute actions on websites to accomplish user-defined objectives.
+  We conduct an extensive evaluation of state-of-the-art LLM-based autonomous agents, including several multimodal models. Through extensive quantitative and qualitative analysis, we identify several limitations of text-only LLM agents, and reveal gaps in the capabilities of state-of-the-art multimodal language agents.
+  VisualWebArena provides a framework for evaluating multimodal autonomous language agents, and offers insights towards building stronger autonomous agents for the web.
+</p>
+</div>
+</div>
+
+<br/><br/>
+
+<div align="left">
+<h1>Example VWA Tasks</h1>
+<div align="center">
+<img style="width: 90%; max-width: 1024px;" src="vwa/tasks_distribution.png" alt="VWA tasks and distribution."/>
+</div>
+<p>We introduce a set of 910 new tasks, split across the Classifieds, Shopping, and Reddit sites detailed above. The Classifieds website is a new environment (with real world data), while the Shopping and Reddit sites are the same ones used in WebArena.</p>
+
+<p>The new tasks we introduce necessitate visual comprehension, and are designed to assess the visual and reasoning skills of autonomous agents in web-based environments. The full set of tasks can be found on our <a href="https://github.com/web-arena-x/visualwebarena" target="_blank">GitHub repo</a>.</p>
+
+<p>Several example tasks from the VWA benchmark are showcased below. The videos are best viewed in fullscreen mode.</p>
+
+<div style="background-color: #f5f5f5; padding: 20px;">
+
+<div class="container mt-5">
+  <div class="carousel-container">
+    <div class="carousel-wrapper carousel-wrapper-1">
+      <!-- Add your video items here -->
+      <div class="carousel-item carousel-item-1">
+        <video
+          poster=""
+          id="1"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/classifieds_133_xbox.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-1">
+        <video
+          poster=""
+          id="2"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/reddit_158_dog.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-1">
+        <video
+          poster=""
+          id="3"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/shopping_179_kellogg.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-1">
+        <video
+          poster=""
+          id="4"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/classifieds_29_redcar.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-1">
+        <video
+          poster=""
+          id="5"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/reddit_46_sugarcane.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+      <!-- Add more video items as needed -->
+    </div>
+  </div>
+
+  <div class="carousel-button prev" onclick="prevSlide()">&#10094;</div>
+  <div class="carousel-button next" onclick="nextSlide()">&#10095;</div>
+</div>
+
+<div class="container mt-5">
+  <div class="carousel-container">
+    <div class="carousel-wrapper carousel-wrapper-2">
+      <!-- Add your video items here -->
+      <div class="carousel-item carousel-item-2">
+        <video
+          poster=""
+          id="6"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/shopping_318_usbc.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-2">
+        <video
+          poster=""
+          id="7"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/classifieds_32_bike.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-2">
+        <video
+          poster=""
+          id="8"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/reddit_78_banana.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-2">
+        <video
+          poster=""
+          id="9"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/shopping_336_printer.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+
+      <div class="carousel-item carousel-item-2">
+        <video
+          poster=""
+          id="5"
+          autoplay
+          controls
+          muted
+          loop
+          playsinline
+          height="100%"
+        >
+          <source
+            src="./vwa/videos/shopping_441_horse.mp4"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+      <!-- Add more video items as needed -->
+    </div>
+  </div>
+
+  <div class="carousel-button prev" onclick="prevSlide2()">&#10094;</div>
+  <div class="carousel-button next" onclick="nextSlide2()">&#10095;</div>
+</div>
+
+  
+</div>
+
+
+<script>
+  let currentIndex = 0;
+
+  function showSlide(index) {
+    const carouselWrapper = $('.carousel-wrapper-1');
+    const itemWidth = $('.carousel-item-1').outerWidth();
+    const newPosition = -index * itemWidth;
+    carouselWrapper.css('transform', 'translateX(' + newPosition + 'px)');
+    currentIndex = index;
+  }
+
+  function nextSlide() {
+    const totalItems = $('.carousel-item-1').length;
+    currentIndex = (currentIndex + 1) % totalItems;
+    showSlide(currentIndex);
+  }
+
+  function prevSlide() {
+    const totalItems = $('.carousel-item-1').length;
+    currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+    showSlide(currentIndex);
+  }
+</script>
+
+<script>
+  let currentIndex2 = 0;
+
+  function showSlide2(index) {
+    const carouselWrapper = $('.carousel-wrapper-2');
+    const itemWidth = $('.carousel-item-2').outerWidth();
+    const newPosition = -index * itemWidth;
+    carouselWrapper.css('transform', 'translateX(' + newPosition + 'px)');
+    currentIndex2 = index;
+  }
+
+  function nextSlide2() {
+    const totalItems = $('.carousel-item-2').length;
+    currentIndex2 = (currentIndex2 + 1) % totalItems;
+    showSlide2(currentIndex2);
+  }
+
+  function prevSlide2() {
+    const totalItems = $('.carousel-item-2').length;
+    currentIndex = (currentIndex2 - 1 + totalItems) % totalItems;
+    showSlide2(currentIndex2);
+  }
+</script>
+
+</div>
+<br/>
+<br/>
+
+
+<div align="left">
+  <h1>Execution-Based Evaluation</h1>
+  <div align="center">
+  <img style="width: 90%; max-width: 1024px;" src="vwa/evals.png" alt="VWA evaluations."/>
+  </div>
+  <p>In order to evaluate performance on VisualWebArena, we introduce new visually grounded evaluation metrics to the functional evaluation paradigm of WebArena. These allow us to comprehensively evaluate the correctness of agent trajectories on open ended visually grounded tasks by running execution-based tests. Several evaluation examples are shown in the figure above.</p>
+  </div>
+<br/>
+<br/>
+  
+
+<div align="left">
+  <h1>Set-of-Marks Representation for Improved Navigability</h1>
+  <img style="width: 100%; max-width: 1024px;" src="vwa/som_figure.png" alt="Set-of-Mark representation."/>
+
+  <p>Inspired by <a href="https://som-gpt4v.github.io/" target="_blank">Set-of-Mark prompting</a>, we perform an initial preprocessing step by using JavaScript to automatically annotate every interactable element on the webpage with a bounding box and a unique ID. The annotated screenshot containing bounding boxes and IDs, are provided as input to the multimodal model along with a text representation of the SoM (see figure above).
+    
+  There have been several approaches that propose similar representations (e.g., <a href="https://github.com/ddupont808/GPT-4V-Act" target="_blank">GPT-4V-ACT</a> and <a href="https://github.com/ishan0102/vimGPT" target="_blank">vimGPT</a>). Most have been proof-of-concept demos, and to the best of our knowledge, we are the first to systematically benchmark this on a realistic and interactive web environment.</p>
+  <p>Our results (below) showcase that the SoM representation improves navigability and achieves a higher success rate on VisualWebArena.</p>
+</div>
+<br/>
+<br/>
+
+<div align="left">
+  <h1>Baseline LLM and VLM Agents</h1>
+  <div>
+  <div class="left-container">
+    <p>We benchmark several state-of-the-art LLM and VLM prompt-based agents. We find that all existing models are significantly below human performance. 
+      Multimodal models generally improve performance on VisualWebArena, but there remains a large gap to be closed.</p>
+  </div>
+  <div class="right-container" align="center">
+    <img style="width: 100%; max-width: 1024px;" src="vwa/sr_chart.png" alt="Success rates of various agents on VWA."/>
+  </div>
+  </div>
+    <br/>
+    
+    <table id="results">
+      <thead>
+          <tr>
+              <th rowspan="2"><strong>Model Type</th>
+              <th rowspan="2">LLM Backbone</th>
+              <th rowspan="2">Visual Backbone</th>
+              <th rowspan="2">Inputs</th>
+              <th colspan="2" style="text-align: center;">Success Rate (&uarr;)</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td rowspan="5">Text-only</td>
+              <td>LLaMA-2-70B</td>
+              <td rowspan="5">-</td>
+              <td rowspan="5">Accessibility Tree</td>
+              <td style="text-align: center;">1.10%</td>
+          </tr>
+          <tr>
+              <td>Mixtral-8x7B</td>
+              <td style="text-align: center;">1.76%</td>
+          </tr>
+          <tr>
+              <td>Gemini-Pro</td>
+              <td style="text-align: center;">2.20%</td>
+          </tr>
+          <tr>
+              <td>GPT-3.5</td>
+              <td style="text-align: center;">2.20%</td>
+          </tr>
+          <tr>
+              <td>GPT-4</td>
+              <td style="text-align: center;">7.25%</td>
+          </tr>
+          <tr>
+              <td rowspan="6">Caption-augmented</td>
+              <td>LLaMA-2-70B</td>
+              <td>BLIP-2-T5XL</td>
+              <td rowspan="6">Accessibility Tree + Captions</td>
+              <td style="text-align: center;">0.66%</td>
+          </tr>
+          <tr>
+            <td>Mixtral-8x7B</td>
+            <td>BLIP-2-T5XL</td>
+            <td style="text-align: center;">1.87%</td>
+        </tr>
+        <tr>
+            <td>GPT-3.5</td>
+            <td>LLaVA-7B</td>
+            <td style="text-align: center;">2.75%</td>
+        </tr>
+        <tr>
+            <td>GPT-3.5</td>
+            <td>BLIP-2-T5XL</td>
+            <td style="text-align: center;">2.97%</td>
+        </tr>
+        <tr>
+            <td>Gemini-Pro</td>
+            <td>BLIP-2-T5XL</td>
+            <td style="text-align: center;">3.85%</td>
+        </tr>
+        <tr>
+            <td>GPT-4</td>
+            <td>BLIP-2-T5XL</td>
+            <td style="text-align: center;">12.75%</td>
+        </tr>
+        <tr>
+            <td rowspan="4">Multimodal</td>
+            <td colspan="2">IDEFICS-80B-Instruct</td>
+            <td rowspan="4">Image + Captions + Accessibility Tree</td>
+            <td style="text-align: center;">0.77%</td>
+        </tr>
+        <tr>
+            <td colspan="2">CogVLM</td>
+            <td style="text-align: center;">0.33%</td>
+        </tr>
+        <tr>
+            <td colspan="2">Gemini-Pro</td>
+            <td style="text-align: center;">6.04%</td>
+        </tr>
+        <tr>
+            <td colspan="2">GPT-4V</td>
+            <td style="text-align: center;">15.05%</td>
+        </tr>
+        <tr>
+            <td rowspan="4">Multimodal (SoM)</td>
+            <td colspan="2">IDEFICS-80B-Instruct</td>
+            <td rowspan="4">Image + Captions + SoM</td>
+            <td style="text-align: center;">0.99%</td>
+        </tr>
+        <tr>
+            <td colspan="2">CogVLM</td>
+            <td style="text-align: center;">0.33%</td>
+        </tr>
+        <tr>
+            <td colspan="2">Gemini-Pro</td>
+            <td style="text-align: center;">5.71%</td>
+        </tr>
+        <tr>
+            <td colspan="2">GPT-4V</td>
+            <td style="text-align: center;">16.37%</td>
+        </tr>
+        <tr>
+            <td>Human Performance</td>
+            <td colspan="2">-</td>
+            <td>Webpage</td>
+            <td style="text-align: center;">88.70%</td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+  <br/>
+  <br/>
+
+<div align="left">
+<h1>Paper</h1>
+<table align="center" height="200px" style="border-collapse: separate; border-spacing: 10px;">
+  <tbody><tr>
+    <td>
+      <a href="https://arxiv.org/abs/2305.17216" target="_blank">
+        <img class="layered-paper-big" style="height:175px;" src="vwa/first_page.png" alt="Paper preview"></a>
+    </td>
+
+    <td>
+      <b><span style="font-size:14pt">VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks</span></b>
+      <br>
+      <span style="font-size:14pt">Jing Yu Koh, Robert Lo*, Lawrence Jang*, Vikram Duvvur*, Ming Chong Lim*, Po-Yu Huang*, Graham Neubig, Shuyan Zhou, Ruslan Salakhutdinov,and Daniel Fried.</span>
+      <br><br>
+      <span style="font-size:14pt">arXiv preprint, 2024.</span>
+      <br>
+      <a href="https://arxiv.org/abs/24xx.xxxxx" target="_blank">[arXiv]</a> &nbsp; &nbsp;
+    </td>
+  </tr>
+</tbody></table>
+</div>
+<br/><br/>
+
+
+<div align="left">
+<h1>Citation</h1>
+<p style="white-space: pre-wrap; font-family: monospace; font-size: 14px; line-height: 150%; background: #f3f3f3; padding: 10px; display: inline-block; border-radius: 4px; width: 100%; overflow-x: scroll;" align="left">@article{koh2024visualwebarena,
+  title={VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks},
+  author={Koh, Jing Yu and Lo, Robert and Jang, Lawrence and Duvvur, Vikramand Lim, Ming Chong and Huang, Po-Yu and Neubig, Graham and Zhou, Shuyan and Salakhutdinov, Ruslan and Fried, Daniel},
+  journal={arXiv preprint arXiv:24xx.xxxxx},
+  year={2024}
+}
+</p>
+</div>
+<br/>
+<br/>
+
+
+<div align="left">
+<h1>Acknowledgements</h1>
+<p>
+We thank photographers on Pexels.com for providing free to use images. We thank Wendy Kua for assisting with measuring human performance and for help with the figures. We thank Yi Tay, Zhiruo Wang, Saujas Vaduguru, Paul Liang, Stephen McAleer, and many others for feedback and helpful discussions on previous versions of the paper.
+</p>
+</div>
+
+</div>
+
+</body>
+</html>
