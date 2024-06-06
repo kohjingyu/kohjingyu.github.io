@@ -348,6 +348,7 @@ body {
   <a href="https://github.com/web-arena-x/visualwebarena" class="button" target="_blank"><i class="fab fa-github"></i>&nbsp;Code</a>
   <a href="https://github.com/web-arena-x/visualwebarena/tree/main/config_files" class="button" target="_blank"><i class="fas fa-folder-open"></i>&nbsp;Data</a>
   <a href="https://www.youtube.com/watch?v=PmWDEqkVnqg" class="button" target="_blank"><i class="fas fa-video"></i>&nbsp;Talk</a>
+  <a href="https://docs.google.com/spreadsheets/d/1M801lEpBbKSNwP-vDBkC_pF7LdyGU1f_ufZb_NWNBZQ/edit?gid=2044883967#gid=2044883967" class="button" target="_blank"><i class="fas fa-trophy"></i>&nbsp;Leaderboard</a>
 </div>
 </div>
 <hr class="light-hr"/>
@@ -718,10 +719,10 @@ body {
               <td style="text-align: center;">7.25%</td>
           </tr>
           <tr>
-              <td rowspan="6">Caption-augmented</td>
+              <td rowspan="7">Caption-augmented</td>
               <td>LLaMA-2-70B</td>
               <td>BLIP-2-T5XL</td>
-              <td rowspan="6">Accessibility Tree + Captions</td>
+              <td rowspan="7">Accessibility Tree + Captions</td>
               <td style="text-align: center;">0.66%</td>
           </tr>
           <tr>
@@ -743,6 +744,11 @@ body {
             <td>Gemini-Pro</td>
             <td>BLIP-2-T5XL</td>
             <td style="text-align: center;">3.85%</td>
+        </tr>
+        <tr>
+            <td>LLaMA-3-70B-Instruct</td>
+            <td>BLIP-2-T5XL</td>
+            <td style="text-align: center;">9.78%</td>
         </tr>
         <tr>
             <td>GPT-4</td>
@@ -768,9 +774,9 @@ body {
             <td style="text-align: center;">15.05%</td>
         </tr>
         <tr>
-            <td rowspan="4">Multimodal (SoM)</td>
+            <td rowspan="7">Multimodal (SoM)</td>
             <td colspan="2">IDEFICS-80B-Instruct</td>
-            <td rowspan="4">Image + Captions + SoM</td>
+            <td rowspan="7">Image + Captions + SoM</td>
             <td style="text-align: center;">0.99%</td>
         </tr>
         <tr>
@@ -782,8 +788,20 @@ body {
             <td style="text-align: center;">5.71%</td>
         </tr>
         <tr>
+            <td colspan="2">Gemini-Flash-1.5</td>
+            <td style="text-align: center;">6.59%</td>
+        </tr>
+        <tr>
+            <td colspan="2">Gemini-Pro-1.5</td>
+            <td style="text-align: center;">11.98%</td>
+        </tr>
+        <tr>
             <td colspan="2">GPT-4V</td>
-            <td style="text-align: center;"><strong>16.37%</strong></td>
+            <td style="text-align: center;">16.37%</td>
+        </tr>
+        <tr>
+            <td colspan="2">GPT-4o</td>
+            <td style="text-align: center;"><strong>19.56%</strong></td>
         </tr>
         <tr>
             <td>Human Performance</td>
@@ -794,6 +812,60 @@ body {
     </tbody>
   </table>
 
+ <!-- <table id="results">
+      <thead>
+          <tr>
+              <th rowspan="2"><strong>Model Type</th>
+              <th rowspan="2">Multimodal Model</th>
+              <th rowspan="2">Inputs</th>
+              <th colspan="2" style="text-align: center;">Success Rate (&uarr;)</th>
+          </tr>
+      </thead>
+      <tbody>
+        <tr>
+            <td rowspan="4">Multimodal</td>
+            <td colspan="1">IDEFICS-80B-Instruct</td>
+            <td rowspan="4">Image + Captions + Accessibility Tree</td>
+            <td style="text-align: center;">0.77%</td>
+        </tr>
+        <tr>
+            <td colspan="1">CogVLM</td>
+            <td style="text-align: center;">0.33%</td>
+        </tr>
+        <tr>
+            <td colspan="1">Gemini-Pro</td>
+            <td style="text-align: center;">6.04%</td>
+        </tr>
+        <tr>
+            <td colspan="1">GPT-4V</td>
+            <td style="text-align: center;">15.05%</td>
+        </tr>
+        <tr>
+            <td rowspan="4">Multimodal (SoM)</td>
+            <td colspan="1">IDEFICS-80B-Instruct</td>
+            <td rowspan="4">Image + Captions + SoM</td>
+            <td style="text-align: center;">0.99%</td>
+        </tr>
+        <tr>
+            <td colspan="1">CogVLM</td>
+            <td style="text-align: center;">0.33%</td>
+        </tr>
+        <tr>
+            <td colspan="1">Gemini-Pro</td>
+            <td style="text-align: center;">5.71%</td>
+        </tr>
+        <tr>
+            <td colspan="1">GPT-4V</td>
+            <td style="text-align: center;"><strong>16.37%</strong></td>
+        </tr>
+        <tr>
+            <td>Human Performance</td>
+            <td colspan="1">-</td>
+            <td>Webpage</td>
+            <td style="text-align: center;">88.70%</td>
+        </tr>
+    </tbody>
+  </table> -->
   </div>
 
 <hr class="light-hr"/>
