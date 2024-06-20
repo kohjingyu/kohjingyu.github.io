@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Tree Search for Language Model Agents</title>
+<meta name="description" content="Project webpage for the Tree Search for Language Model Agents paper.">
+<meta name="viewport" initial-scale=1.0 content="width=device-width" />
+
+<link rel="stylesheet" href="./vwa/css/bulma.min.css">
+<!-- https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css -->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-15238452-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<style>
+a {
+  text-decoration: none;
+}
+
+html, body {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    color: #000;
+}
+
+.content {
+  width: 90%;
+  max-width: 1024px;
+  padding: 20px 0;
+  margin: auto;
+}
+
+.header {
+  /*background-color: #F00;*/
+}
+
+.publication-venue {
+  font-size: 20px;
+  color:  #AB2317;
+  font-weight: 600;
+  margin:  8px 0px;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 32px;
+    /*margin-bottom: 0;*/
+}
+
+th {
+    font-weight: 300;
+    font-size: 18px;
+}
+
+
+.authors {
+  max-width: 768px;
+}
+
+.authors a {
+  font-size:  18px;
+  margin: 0 20px;
+  white-space: nowrap;
+  /*width: 70%;*/
+}
+
+.authors span {
+  font-size:  18px;
+  margin: 0 20px;
+  white-space: nowrap;
+}
+
+.affiliation {
+    font-size: 18px;
+    color:  #000;
+    /*color:  #AB2317;*/
+     /*font-weight: 600; */
+}
+
+.contribution {
+  font-size: 15px;
+}
+
+.emails {
+  font-family: monospace;
+  color: #888; 
+  font-size: 13px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 20px;
+  margin:  15px 15px 0px 15px;
+  text-decoration: none;
+  color: #363636;
+  background-color: rgb(245, 245, 245, 1.0);
+  border-radius: 5px;
+}
+
+.button i {
+  margin-right: 5px; /* Add some space between the icon and text if needed */
+}
+
+
+.button:hover {
+  background-color: #cacaca; /* slightly darker grey */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.button i {
+  margin-right: 8px;
+  line-height:  100%;
+  height:  100%;
+}
+
+
+.button.coming-soon {
+  padding: 8px 20px;
+  background-color: #cccccc; /* light gray */
+  color: #999999; /* gray */
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.button.coming-soon::after {
+  content: "(coming soon!)";
+  color: #333;
+  font-size: 14px;
+  display: block;
+  /*margin-bottom: -10px;*/
+}
+
+.container {
+  /*text-align: center;*/
+  display:  flex;
+  align-items:  center;
+  justify-content: center;
+}
+
+.abstract {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.left-container {
+  width: 40%;
+  margin-right: 1%;
+  display:  inline-block;
+  margin-bottom: 20px;
+}
+
+.right-container {
+  width:  58%;
+  margin-left: 1%;
+  display:  inline-block;
+  float: right;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .left-container {
+    width: 90%;
+  }
+  .right-container {
+    width:  90%;
+  }
+}
+
+.dialogue-image {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .dialogue-image {
+    width: 90%;
+  }
+}
+
+
+html {
+    display: table;
+    margin: auto;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.light-hr {
+  box-shadow: none; /* remove the box-shadow */
+  background-color: #eee; /* make the line less dark */
+}
+
+.layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
+  box-shadow:
+          0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
+          5px 5px 0 0px #fff, /* The second layer */
+          5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
+          10px 10px 0 0px #fff, /* The third layer */
+          10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
+          15px 15px 0 0px #fff, /* The fourth layer */
+          15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
+          20px 20px 0 0px #fff, /* The fifth layer */
+          20px 20px 1px 1px rgba(0,0,0,0.35);
+  margin-left: 0px;
+  margin-right: 40px;
+}
+
+/* Style for the table */
+#results {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Style for table headers and cells */
+#results th, #results td {
+  border: 1px solid black;
+  text-align: left;
+  padding: 8px;
+  font-size: 14px;
+}
+
+/* Style for header row */
+#results th {
+  font-size: 16px;
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.video-container {
+  width: 100%;
+  align-items: center; /* This will center the videos vertically */
+}
+
+.video-container video {
+  width: 49%;
+  height: auto;
+  display: inline-block;
+}
+
+/* Alternating row colors */
+#results tr:nth-child(even) {background-color: #f2f2f2;}
+</style>
+
+<!--[if lt IE 9]>
+<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/vwa/icon.ico">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Add jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<style>
+    .carousel-container {
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%; /* Make the container cover the entire height of the page */
+    }
+
+    .carousel-wrapper {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 200%; /* Make the wrapper twice as wide to fit two videos side by side */
+    }
+
+    .carousel-item {
+      flex: 0 0 49%; /* Make the videos wider and add margin */
+      max-width: 49%;
+      margin: 0 1%; /* Add margin between videos */
+      box-sizing: border-box;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      z-index: 1; /* Ensure the buttons appear above the videos */
+      background-color: rgb(235, 235, 235, 1.0);
+      border-radius: 50%;
+      padding: 10px;
+      color: #000000;
+      font-size: 1.5rem;
+      transition: background-color 0.3s, color 0.3s;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
+    }
+
+    .prev {
+      left: 0;
+    }
+
+    .next {
+      right: 0;
+    }
+</style>
+
+<style>
+table {
+    width: 100%;
+    border-collapse: collapse;
+    /* font-family: Arial, sans-serif; */
+}
+th, td {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+th, td {
+    vertical-align: middle;
+}
+.caption {
+    font-family: Arial, sans-serif;
+    color: #666;
+    font-size: 14px;
+}
+a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<!-- Add MathJax for LaTeX rendering -->
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+</head>
+<body>
+<div class="content"  align="center">
+
+<div class="header" align="center">
+<div>
+<h1>Tree Search for Language Model Agents</h1>
+<!-- <p class="publication-venue">Preprint</p> -->
+</div>
+<div class="authors" align="center">
+  <a href="https://jykoh.com" target="_blank">Jing Yu Koh</a>
+  <a href="https://mcaleste.github.io/" target="_blank">Stephen McAleer</a>
+  <a href="https://dpfried.github.io" target="_blank">Daniel Fried</a>
+  <a href="https://www.cs.cmu.edu/~rsalakhu/" target="_blank">Ruslan Salakhutdinov</a>
+</div>
+<div class="affiliation" style="width:40%;" align="center">Carnegie Mellon University</div>
+<div class="emails" style="width:100%;" align="center">{jingyuk,smcaleer,dfried,rsalakhu}@cs.cmu.edu</div>
+</table>
+
+
+<div class="container">
+  <a href="agent-search/paper.pdf" class="button" target="_blank"><i class="fas fa-file-pdf"></i>&nbsp;Paper</a>
+  <a href="https://github.com/kohjingyu/agent-search" class="button" target="_blank"><i class="fab fa-github"></i>&nbsp;Code</a>
+  <!-- <a href="https://www.youtube.com/watch?v=PmWDEqkVnqg" class="button" target="_blank"><i class="fas fa-video"></i>&nbsp;Talk</a> -->
+</div>
+</div>
+<hr class="light-hr"/>
+
+<div class="abstract">
+<div align="left">
+<!-- <div align="center">
+<img style="width: 90%; max-width: 1024px;" src="agent-search/search_overview.gif" alt="Tree search for language model agents animation."/>
+</div> -->
+
+<p>
+  Autonomous agents powered by language models (LMs) have demonstrated promise in their ability to perform decision-making tasks such as web automation. However, a fundamental challenge remains: LMs, primarily optimized for natural language understanding and generation, struggle with multi-step reasoning, planning, and using environmental feedback when attempting to solve realistic computer tasks. 
+  Towards addressing this, we propose an inference-time search algorithm for LM agents to explicitly perform exploration and multi-step planning in interactive web environments. 
+  Our approach is a form of best-first tree search that operates within the actual environment space, and is complementary with most existing state-of-the-art agents. 
+  It is the first tree search algorithm for LM agents that shows effectiveness on realistic web tasks. 
+  On the challenging VisualWebArena benchmark, applying our search algorithm on top of a  GPT-4o agent yields a 39.7% relative increase in success rate compared to the same baseline without search, setting a state-of-the-art success rate of 26.4%. On WebArena, search also yields a 28.0% relative improvement over a baseline agent, setting a competitive success rate of 19.2%. 
+  Our experiments highlight the effectiveness of search for web agents, and we demonstrate that performance scales with increased test-time compute. 
+  We conduct a thorough analysis of our results to highlight improvements from search, limitations, and promising directions for future work.
+</p>
+</div>
+</div>
+<hr class="light-hr"/>
+
+
+<div align="left">
+<h1>Method</h1>
+<div align="center">
+  <img style="width: 90%; max-width: 1024px;" src="agent-search/search_overview.gif" alt="Tree search for language model agents overview."/>
+</div>
+<p>
+  Our proposed search algorithm is a best-first search method loosely inspired by A* search~\citep{hart1968formal}, a classic graph traversal algorithm used widely in computer science. 
+  We use a language model agent to propose candidate branches of the search tree. The search has hyperparameters depth \(d\), branching factor \(b\), and search budget \(c\) which determine the maximum size of the search tree, and termination probability threshold \(\theta\). 
+  We describe the procedure in detail in the following paragraphs and provide the formal algorithm in the appendix of the paper.
+  
+  At time \(t\) in the execution trajectory, the agent has previously executed a sequence of actions to arrive at the current state \(s_t\). We begin the search algorithm from \(s_t\) by initializing the frontier \(\mathcal{F} \leftarrow \{ \}\) (implemented as a max priority queue) which holds the set of states that we plan to evaluate, the best state found so far \(\hat{s}_t \leftarrow s_t\), the score of the best sequence \(\hat{v}_t \leftarrow 0\), and the search counter \(s \leftarrow 0\). 
+  
+  At each iteration of the search process, we extract the next item from the frontier, \(s_p \leftarrow \text{pop}(\mathcal{F})\). 
+  We use the value function to compute the score for state \(s_p\) (with observation \(o_p\) and previous observations \(o_1, \ldots, o_{p-1}\)):
+  \[
+  v_p = f_v(I, \{ o_1, \ldots, o_p \})
+  \]
+  
+  Then, we increment the search counter \(s\), and if \(v_p\) is higher than the current best score \(\hat{v}_t\), we update it and our best state accordingly:
+  \[
+  s \leftarrow s + 1 \\
+  \hat{s}_t \leftarrow 
+  \begin{cases} 
+  s_p & \text{if } v_p > \hat{v}_t \\
+  \hat{s}_t & \text{otherwise}
+  \end{cases} \\
+  \hat{v}_t \leftarrow \max(\hat{v}_t, v_p)
+  \]
+  If \(v_p \geq \theta\) (the agent is likely to have found a goal state) or \(s \geq c\) (the search budget has been exceeded), we will terminate the search and navigate to the best state \(\hat{s}_t\) found thus far. 
+  
+  Otherwise, if the current branch does not exceed the maximum depth (i.e., \(| (s_0, \ldots, s_{p}) | < d\)), we will generate plausible next actions for branching by obtaining \(b\) candidate actions \(\{ a_{p}^1, \ldots, a_{p}^b \}\) from the language model agent \(f_{\phi}\). 
+  For each \(i\), we execute \(a_p^i\) and add the resulting state \(s_{p}^i\) to the frontier with the score of the current state:
+  \[
+  \mathcal{F} \leftarrow \mathcal{F} \cup (v_p, s_p^i) \qquad \text{ for } i = 1, \ldots, b
+  \]
+  This concludes one iteration of search. If both of the termination conditions have not been reached, we backtrack and repeat this process for the next best state from the updated frontier \(\mathcal{F}\).
+  </p>
+</div>
+<hr class="light-hr"/>
+
+<div align="left">
+  <h1>Results</h1>
+
+  <table>
+    <thead>
+        <tr>
+            <th>Benchmark</th>
+            <th>Agent Model</th>
+            <th>Max Actions</th>
+            <th>No Search</th>
+            <th>+ Search</th>
+            <th>Relative Change</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="4">VisualWebArena</td>
+            <td>GPT-4o + SoM <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup></td>
+            <td rowspan="2">30</td>
+            <td>19.8%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Llama-3-70B-Instruct <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup></td>
+            <td>9.8%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>Llama-3-70B-Instruct (ours)</td>
+            <td rowspan="2">5</td>
+            <td>7.6%</td>
+            <td>16.7%</td>
+            <td>+119.7%</td>
+        </tr>
+        <tr>
+            <td>GPT-4o + SoM (ours)</td>
+            <td>18.9%</td>
+            <td><strong>26.4%</strong></td>
+            <td>+39.7%</td>
+        </tr>
+        <tr>
+            <td rowspan="7">WebArena</td>
+            <td>GPT-4o <sup><a href="https://arxiv.org/abs/2307.13854" target="_blank">[2]</a></sup></td>
+            <td rowspan="6">30</td>
+            <td>13.1%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>GPT-4 + Reflexion <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[3]</a></sup></td>
+            <td>15.6%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>AutoWebGLM <sup><a href="https://arxiv.org/abs/2404.03648" target="_blank">[4]</a></sup></td>
+            <td>18.2%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>AutoEval <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[3]</a></sup></td>
+            <td>20.2%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+          <td>BrowserGym (GPT-4) <sup><a href="https://arxiv.org/abs/2403.07718" target="_blank">[5]</a></sup></td>
+          <td>20.2%</td>
+          <td>-</td>
+          <td>-</td>
+      </tr>
+      <tr>
+            <td>SteP <sup><a href="https://arxiv.org/abs/2310.03720" target="_blank">[6]</a></sup></td>
+            <td><strong>35.8%</strong></td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid #dddddd;">GPT-4o (ours)</td>
+          <td style="border-bottom: 1px solid #dddddd;">5</td>
+          <td style="border-bottom: 1px solid #dddddd;">15.0%</td>
+          <td style="border-bottom: 1px solid #dddddd;">19.2%</td>
+          <td style="border-bottom: 1px solid #dddddd;">+28.0%</td>
+        </tr>
+    </tbody>
+</table>
+
+<p class="caption">Success rates (SR) and relative change (&#x0394;) for baseline models and models that employ search on the VisualWebArena <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup> and WebArena <sup><a href="https://arxiv.org/abs/2307.13854" target="_blank">[2]</a></sup> benchmarks. We also show other published approaches. Search substantially improves our baseline models, setting a new state-of-the-art on VisualWebArena.</p>
+
+  
+<p>
+Our results are summarized in the table above. Introducing search increases success rate substantially across the board. Search improves the success rate of the baseline GPT-4o + SoM agent on VWA by 39.7\% relatively (increasing from \(18.6\%\) to \(26.4\%\)), setting a new state-of-the-art on the benchmark. On WA, introducing search to the GPT-4o agent improves the success rate substantially as well, increasing it by \(28.0\%\) relatively (\(15.0\%\) to \(19.2\%\)). This is competitive with several other prompt-based agents on WA. 
+</p>
+
+<p>
+With the Llama-3 caption-augmented agent on VWA, we see that search brings even more significant improvements, improving the success rate by \(119.7\%\) (\(7.6\%\) to \(16.7\%\)). We attribute this to the GPT-4o model used for the value function being a generally stronger (multimodal) model than Llama-3. With search, Llama-3-70B-Instruct achieves success rates that are close to the best frontier multimodal models. 
+As Llama-3 has openly available model weights, the strong performance of the Llama-3-70B-Instruct agent with search can prove to be a cost effective agent model for iteration and development in future work which requires access to model internals.  
+</p>
+</div>
+<hr class="light-hr"/>
+
+<div align="left">
+  <h1>Analysis</h1>
+  <div align="center">
+  <img style="width: 80%; max-width: 1024px;" src="agent-search/ablations_combined.png" alt="Ablation experiments over search budget."/>
+  </div>
+
+  <p><strong>Increasing search budget leads to better results.</strong>&nbsp;&nbsp;&nbsp;
+    We plot the success rate of the GPT-4o agent with search limited to varying budgets \(c\) in the left of the figure above. All experiments are conducted with search parameters of depth \(d = 5\) and branching factor \(b = 5\). The search budget specifies the maximum number of node expansions performed at each step. For example, a search budget of 10 indicates that at most 10 nodes will be expanded, after which the agent will commit to and execute the trajectory with the highest value. 
+    We observe that success rate generally increases as search budget increases. Notably, performing even very small amounts of search \(c = 5\) substantially improves success rate by \(30.6\%\) relative to not doing search (\(24.5\%\) to \(32.0\%\)). When the budget is increased to \(c = 20\), this improves success rate by \(51.0\%\) relative to not doing search (from \(24.5\%\) to \(37.0\%\)), highlighting the benefit of scaling the search budget. Running experiments with an even greater search budget to evaluate scaling trends would be a promising future direction to explore.
+  </p>
+
+  <p><strong>Larger search trees lead to better results.</strong>&nbsp;&nbsp;&nbsp;
+    We run an ablation experiment varying the search branching factor \(b\) and maximum depth \(d\). The results are summarized in the table on the right above. We observe that in general, success rate increases as the size of search tree increases (along both \(b\) and \(d\) dimensions). In particular, scaling both \(b\) and \(d\) is necessary to achieve strong performance.
+    </p>
+  </div>
+<hr class="light-hr"/>
+
+
+<div align="left">
+  <h1>Qualitative Results</h1>
+  <div align="center">
+    <img style="width: 80%; max-width: 1024px;" src="agent-search/qualitative_48.png" alt="Qualitative results for classifieds task #48."/>
+  </div>
+
+  <p>Search can improve the robustness of agents by filtering out bad actions. Shown above is a trajectory for VWA classifieds task #48 where greedily picking the first sampled actions would have led to a failure (by taking the path in the first row). Search avoids this failure mode by exploring and pruning less promising paths, ultimately committing to the highlighted trajectory.</p>
+  <br/>
+
+  <div align="center">
+    <img style="width: 80%; max-width: 1024px;" src="agent-search/qualitative_96.png" alt="Qualitative results for shopping task #96."/>
+  </div>
+  <p>VWA shopping task #96 is another example where search allows the model to be more robust to sampling bad actions. On this task, the baseline agent without search failed, but the agent with search is able to prune less promising trajectories (faded nodes in the figure) to identify the successful one.</p>
+
+  <p>More examples are available in our <a href="agent-search/paper.pdf" target="_blank">paper</a>.</p>
+</div>
+<hr class="light-hr"/>
+
+
+<div align="left">
+<h1>Paper</h1>
+<table align="center" height="200px" style="border-collapse: separate; border-spacing: 10px;">
+  <tbody><tr>
+    <td>
+      <a href="agent-search/paper.pdf" target="_blank">
+        <img class="layered-paper-big" style="height:175px;" src="agent-search/first_page.png" alt="Paper preview"></a>
+    </td>
+
+    <td>
+      <b><span style="font-size:14pt">Tree Search for Language Model Agents</span></b>
+      <br>
+      <span style="font-size:14pt">Jing Yu Koh, Stephen McAleer, Daniel Fried, and Ruslan Salakhutdinov.</span>
+      <br><br>
+      <span style="font-size:14pt">Preprint, 2024.</span>
+      <br>
+      <a href="agent-search/paper.pdf" target="_blank">[PDF]</a> &nbsp; &nbsp;
+    </td>
+  </tr>
+</tbody></table>
+</div>
+
+<hr class="light-hr"/>
+<div align="left">
+<h1>Citation</h1>
+<p style="white-space: pre-wrap; font-family: monospace; font-size: 14px; line-height: 150%; background: #f3f3f3; padding: 10px; display: inline-block; border-radius: 4px; width: 100%; overflow-x: scroll;" align="left">@article{koh2024tree,
+  title={Tree Search for Language Model Agents},
+  author={Koh, Jing Yu and McAleer, Stephen and Fried, Daniel and Salakhutdinov, Ruslan},
+  journal={arXiv preprint},
+  year={2024}
+}
+</p>
+</div>
+<br/>
+<br/>
+
+
+<div align="left">
+<h1>Acknowledgements</h1>
+<p>
+We thank Andy Liu, Zhiruo Wang, Alex Xie, Shuyan Zhou, and many others for helpful feedback on previous versions of this paper. We thank Wendy Kua for helping with the figures.
+</p>
+</div>
+
+</div>
+
+</body>
+</html>
