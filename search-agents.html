@@ -461,16 +461,22 @@ a:hover {
     </thead>
     <tbody>
         <tr>
-            <td rowspan="4">VisualWebArena</td>
+            <td rowspan="5">VisualWebArena</td>
+            <td>Llama-3-70B-Instruct <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup></td>
+            <td rowspan="3">30</td>
+            <td>9.8%</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
             <td>GPT-4o + SoM <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup></td>
-            <td rowspan="2">30</td>
             <td>19.8%</td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
-            <td>Llama-3-70B-Instruct <sup><a href="https://arxiv.org/abs/2401.13649" target="_blank">[1]</a></sup></td>
-            <td>9.8%</td>
+            <td>ICAL <sup><a href="https://arxiv.org/abs/2406.14596" target="_blank">[2]</a></sup></td>
+            <td>23.4%</td>
             <td>-</td>
             <td>-</td>
         </tr>
@@ -488,46 +494,52 @@ a:hover {
             <td>+39.7%</td>
         </tr>
         <tr>
-            <td rowspan="7">WebArena</td>
-            <td>GPT-4o <sup><a href="https://arxiv.org/abs/2307.13854" target="_blank">[2]</a></sup></td>
+            <td rowspan="8">WebArena</td>
+            <td>GPT-4o <sup><a href="https://arxiv.org/abs/2307.13854" target="_blank">[3]</a></sup></td>
             <td rowspan="6">30</td>
             <td>13.1%</td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
-            <td>GPT-4 + Reflexion <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[3]</a></sup></td>
+            <td>GPT-4 + Reflexion <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[4]</a></sup></td>
             <td>15.6%</td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
-            <td>AutoWebGLM <sup><a href="https://arxiv.org/abs/2404.03648" target="_blank">[4]</a></sup></td>
+            <td>AutoWebGLM <sup><a href="https://arxiv.org/abs/2404.03648" target="_blank">[5]</a></sup></td>
             <td>18.2%</td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
-            <td>AutoEval <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[3]</a></sup></td>
+            <td>AutoEval <sup><a href="https://arxiv.org/abs/2404.06474" target="_blank">[4]</a></sup></td>
             <td>20.2%</td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
-          <td>BrowserGym (GPT-4) <sup><a href="https://arxiv.org/abs/2403.07718" target="_blank">[5]</a></sup></td>
+          <td>BrowserGym (GPT-4) <sup><a href="https://arxiv.org/abs/2403.07718" target="_blank">[6]</a></sup></td>
           <td>23.5%</td>
           <td>-</td>
           <td>-</td>
       </tr>
       <tr>
-            <td>SteP <sup><a href="https://arxiv.org/abs/2310.03720" target="_blank">[6]</a></sup></td>
+            <td>SteP <sup><a href="https://arxiv.org/abs/2310.03720" target="_blank">[7]</a></sup></td>
             <td><strong>35.8%</strong></td>
             <td>-</td>
             <td>-</td>
         </tr>
         <tr>
+          <td style="border-bottom: 1px solid #dddddd;">Llama-3-70B-Instruct (ours)</td>
+          <td rowspan="2" style="border-bottom: 1px solid #dddddd;">5</td>
+          <td style="border-bottom: 1px solid #dddddd;">7.6%</td>
+          <td style="border-bottom: 1px solid #dddddd;">10.1%</td>
+          <td style="border-bottom: 1px solid #dddddd;">+32.3%</td>
+        </tr>
+        <tr>
           <td style="border-bottom: 1px solid #dddddd;">GPT-4o (ours)</td>
-          <td style="border-bottom: 1px solid #dddddd;">5</td>
           <td style="border-bottom: 1px solid #dddddd;">15.0%</td>
           <td style="border-bottom: 1px solid #dddddd;">19.2%</td>
           <td style="border-bottom: 1px solid #dddddd;">+28.0%</td>
@@ -544,6 +556,7 @@ Our results are summarized in the table above. Introducing search increases succ
 
 <p>
 With the Llama-3 caption-augmented agent on VWA, we see that search brings even more significant improvements, improving the success rate by \(119.7\%\) (\(7.6\%\) to \(16.7\%\)). We attribute this to the GPT-4o model used for the value function being a generally stronger (multimodal) model than Llama-3. With search, Llama-3-70B-Instruct achieves success rates that are close to the best frontier multimodal models. 
+On WebArena, we also see a substantial relative improvement of \(32.2\%\) for the text-based Llama-3 agent (\(7.6\%\) to \(10.1\%\)). 
 As Llama-3 has openly available model weights, the strong performance of the Llama-3-70B-Instruct agent with search can prove to be a cost effective agent model for iteration and development in future work which requires access to model internals.  
 </p>
 </div>
@@ -552,8 +565,9 @@ As Llama-3 has openly available model weights, the strong performance of the Lla
 <div align="left">
   <h1>Analysis</h1>
   <div align="center">
-  <img style="width: 80%; max-width: 1024px;" src="search-agents/ablations_combined.png" alt="Ablation experiments over search budget."/>
+  <img style="width: 100%; max-width: 1024px;" src="search-agents/ablations_combined_v2.png" alt="Ablation experiments over search budget."/>
   </div>
+  <br/>
 
   <p><strong>Increasing search budget leads to better results.</strong>&nbsp;&nbsp;&nbsp;
     We plot the success rate of the GPT-4o agent with search limited to varying budgets \(c\) in the left of the figure above. All experiments are conducted with search parameters of depth \(d = 5\) and branching factor \(b = 5\). The search budget specifies the maximum number of node expansions performed at each step. For example, a search budget of 10 indicates that at most 10 nodes will be expanded, after which the agent will commit to and execute the trajectory with the highest value. 
@@ -561,7 +575,11 @@ As Llama-3 has openly available model weights, the strong performance of the Lla
   </p>
 
   <p><strong>Larger search trees lead to better results.</strong>&nbsp;&nbsp;&nbsp;
-    We run an ablation experiment varying the search branching factor \(b\) and maximum depth \(d\). The results are summarized in the table on the right above. We observe that in general, success rate increases as the size of search tree increases (along both \(b\) and \(d\) dimensions). In particular, scaling both \(b\) and \(d\) is necessary to achieve strong performance.
+    We run an ablation experiment varying the search branching factor \(b\) and maximum depth \(d\). The results are summarized in the table in the middle above. We observe that in general, success rate increases as the size of search tree increases (along both \(b\) and \(d\) dimensions). In particular, scaling both \(b\) and \(d\) is necessary to achieve strong performance.
+    </p>
+
+  <p><strong>Better value functions produce better results.</strong>&nbsp;&nbsp;&nbsp;
+    We ablate the multimodal model used for the value function (see table to the right above), swapping out GPT-4o for (1) the LLaVA-v1.6-34B multimodal model prompted zero-shot (with just the current observation) and (2) the groundtruth reward from VWA (which is a sparse reward signal that returns either 0 or 1), and (3) GPT-4o without self-consistency. We find that the GPT-4o value function significant outperforms the LLaVA model, improving the result of the agent from \(30.0\%\) to \(37.0\%\). The groundtruth reward function achieves a success rate of \(43.5\%\). These results suggest that there is still significant headroom in improving the search algorithm by training better value functions. We also observe that self-consistency is essential for the performance of search \((28.5\% \rightarrow 37.0\%)\), which we attribute to it enabling marginalization over multiple reasoning chains, reducing noise during state evaluation.
     </p>
   </div>
 <hr class="light-hr"/>
