@@ -74,6 +74,12 @@ h3 {
   /*border-right: 1px dashed rgba(0, 0, 0, .2);*/
 }
 
+.publication-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
 .portfolio-item {
   border-bottom: 1px dashed rgba(0, 0, 0, .2);
 }
